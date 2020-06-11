@@ -1,7 +1,0 @@
-{
-  "files.associations": {},
-  "go.buildFlags": ["-v"],
-  "go.testFlags": [],
-  "go.autocompleteUnimportedPackages": true,
-  "go.inferGopath": false
-}
