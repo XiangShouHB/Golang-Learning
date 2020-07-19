@@ -67,7 +67,7 @@ func main() {
 	var _ Phone = new(Huawei)
 	var _ Phone = (*Huawei)(nil) // new(Huawei)写是编译的时候检查，这样写是运行的时候检查
 
-	var _ Phone = new(Xiaomi) // 这行代码编译会报错，因 为Xiaomi 没有实现 Phone 接口的所有方法，报错内容如下
+	//var _ Phone = new(Xiaomi) // 这行代码编译会报错，因 为Xiaomi 没有实现 Phone 接口的所有方法，报错内容如下
 	// Cannot use 'new(Xiaomi)' (type *Xiaomi) as type Phone Type does not implement 'Phone' as some methods are missing: call()
 
 }

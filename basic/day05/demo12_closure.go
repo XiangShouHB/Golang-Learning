@@ -64,3 +64,4 @@ func outter2() func(inn_var int) int  {
 	// 2.返回值为内层函数
 	return inner
 }
+
