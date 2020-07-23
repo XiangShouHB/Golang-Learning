@@ -17,7 +17,7 @@ func main() {
 			之前学习的通道都是双向通道，可读可写
 			chan T
 				chan <- data，发送数据，写出
-				data <- chan，获取数据，读取
+				data <- chan，接收数据，读取
 
 		单向：定向，只支持读写其中的一个操作
 			chan <- T，只支持写

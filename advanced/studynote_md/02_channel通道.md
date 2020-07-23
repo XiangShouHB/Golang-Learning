@@ -1,29 +1,22 @@
-# channel通道
+# channel 通道
 
-> @author：韩茹
->
-> 版权所有：北京千锋互联科技有限公司
+通道可以被认为是 Goroutines 通信的管道。类似于管道中的水从一端到另一端的流动，数据可以从一端发送到另一端，通过通道接收。
 
-
-
-通道可以被认为是Goroutines通信的管道。类似于管道中的水从一端到另一端的流动，数据可以从一端发送到另一端，通过通道接收。
-
-在前面讲Go语言的并发时候，我们就说过，当多个Goroutine想实现共享数据的时候，虽然也提供了传统的同步机制，但是Go语言强烈建议的是使用Channel通道来实现Goroutines之间的通信。
+在前面讲 Go 语言的并发时候，我们就说过，当多个 Goroutine 想实现共享数据的时候，虽然也提供了传统的同步机制，但是 Go 语言强烈建议的是使用 Channel 通道来实现 Goroutines 之间的通信。
 
 ```
 “不要通过共享内存来通信，而应该通过通信来共享内存” 这是一句风靡golang社区的经典语
 ```
 
-Go语言中，要传递某个数据给另一个goroutine(协程)，可以把这个数据封装成一个对象，然后把这个对象的指针传入某个channel中，另外一个goroutine从这个channel中读出这个指针，并处理其指向的内存对象。Go从语言层面保证同一个时间只有一个goroutine能够访问channel里面的数据，为开发者提供了一种优雅简单的工具，所以Go的做法就是使用channel来通信，通过通信来传递内存数据，使得内存数据在不同的goroutine中传递，而不是使用共享内存来通信。
-
+Go 语言中，要传递某个数据给另一个 goroutine(协程)，可以把这个数据封装成一个对象，然后把这个对象的指针传入某个 channel 中，另外一个 goroutine 从这个 channel 中读出这个指针，并处理其指向的内存对象。Go 从语言层面保证同一个时间只有一个 goroutine 能够访问 channel 里面的数据，为开发者提供了一种优雅简单的工具，所以 Go 的做法就是使用 channel 来通信，通过通信来传递内存数据，使得内存数据在不同的 goroutine 中传递，而不是使用共享内存来通信。
 
 ## 一、 什么是通道
 
 ### 1.1 通道的概念
 
-通道是什么，通道就是goroutine之间的通道。它可以让goroutine之间相互通信。
+通道是什么，通道就是 goroutine 之间的通道。它可以让 goroutine 之间相互通信。
 
-每个通道都有与其相关的类型。该类型是通道允许传输的数据类型。(通道的零值为nil。nil通道没有任何用处，因此通道必须使用类似于map和切片的方法来定义。)
+每个通道都有与其相关的类型。该类型是通道允许传输的数据类型。(通道的零值为 nil。nil 通道没有任何用处，因此通道必须使用类似于 map 和切片的方法来定义。)
 
 ### 1.2 通道的声明
 
@@ -35,8 +28,6 @@ var 通道名 chan 数据类型
 //创建通道：如果通道为nil(就是不存在)，就需要先创建通道
 通道名 = make(chan 数据类型)
 ```
-
-
 
 示例代码：
 
@@ -67,12 +58,12 @@ channel 是 nil 的, 不能使用，需要先创建通道。。
 也可以简短的声明：
 
 ```go
-a := make(chan int) 
+a := make(chan int)
 ```
 
-### 1.3 channel的数据类型
+### 1.3 channel 的数据类型
 
-channel是引用类型的数据，在作为参数传递的时候，传递的是内存地址。
+channel 是引用类型的数据，在作为参数传递的时候，传递的是内存地址。
 
 示例代码：
 
@@ -102,29 +93,25 @@ func test1(ch chan int){
 
 ![WX20190812-154429](img/WX20190812-154429.png)
 
-我们能够看到，ch和ch1的地址是一样的，说明它们是同一个通道。
-
-
+我们能够看到，ch 和 ch1 的地址是一样的，说明它们是同一个通道。
 
 ### 1.4 通道的注意点
 
-Channel通道在使用的时候，有以下几个注意点：
+Channel 通道在使用的时候，有以下几个注意点：
 
-- 1.用于goroutine，传递消息的。
+- 1.用于 goroutine，传递消息的。
 - 2.通道，每个都有相关联的数据类型,
-  			nil chan，不能使用，类似于nil map，不能直接存储键值对
+  nil chan，不能使用，类似于 nil map，不能直接存储键值对
 - 3.使用通道传递数据：<-
-  			   chan <- data,发送数据到通道。向通道中写数据
-       data <- chan,从通道中获取数据。从通道中读数据
+  chan <- data,发送数据到通道。向通道中写数据
+  data <- chan,从通道中获取数据。从通道中读数据
 - 4.阻塞：
-  			   发送数据：chan <- data,阻塞的，直到另一条goroutine，读取数据来解除阻塞
-       读取数据：data <- chan,也是阻塞的。直到另一条goroutine，写出数据解除阻塞。
-  
-- 5.本身channel就是同步的，意味着同一时间，只能有一条goroutine来操作。
+  发送数据：chan <- data,阻塞的，直到另一条 goroutine，读取数据来解除阻塞
+  读取数据：data <- chan,也是阻塞的。直到另一条 goroutine，写出数据解除阻塞。
 
-最后：通道是goroutine之间的连接，所以通道的发送和接收必须处在不同的goroutine中。
+- 5.本身 channel 就是同步的，意味着同一时间，只能有一条 goroutine 来操作。
 
-
+最后：通道是 goroutine 之间的连接，所以通道的发送和接收必须处在不同的 goroutine 中。
 
 ## 二、通道的使用语法
 
@@ -133,7 +120,7 @@ Channel通道在使用的时候，有以下几个注意点：
 发送和接收的语法：
 
 ```go
-data := <- a // read from channel a  
+data := <- a // read from channel a
 a <- data // write to channel a
 ```
 
@@ -145,15 +132,11 @@ a <- data // write to channel a
 v, ok := <- a //从一个channel中读取
 ```
 
-
-
-
-
 ### 2.2 发送和接收默认是阻塞的
 
-一个通道发送和接收数据，默认是阻塞的。当一个数据被发送到通道时，在发送语句中被阻塞，直到另一个Goroutine从该通道读取数据。相对地，当从通道读取数据时，读取被阻塞，直到一个Goroutine将数据写入该通道。
+一个通道发送和接收数据，默认是阻塞的。当一个数据被发送到通道时，在发送语句中被阻塞，直到另一个 Goroutine 从该通道读取数据。相对地，当从通道读取数据时，读取被阻塞，直到一个 Goroutine 将数据写入该通道。
 
-这些通道的特性是帮助Goroutines有效地进行通信，而无需像使用其他编程语言中非常常见的显式锁或条件变量。
+这些通道的特性是帮助 Goroutines 有效地进行通信，而无需像使用其他编程语言中非常常见的显式锁或条件变量。
 
 示例代码：
 
@@ -191,9 +174,9 @@ func main() {
 
 ![WX20190812-153205](img/WX20190812-153205.png)
 
-在上面的程序中，我们先创建了一个chan bool通道。然后启动了一条子Goroutine，并循环打印10个数字。然后我们向通道ch1中写入输入true。然后在主goroutine中，我们从ch1中读取数据。这一行代码是阻塞的，这意味着在子Goroutine将数据写入到该通道之前，主goroutine将不会执行到下一行代码。因此，我们可以通过channel实现子goroutine和主goroutine之间的通信。当子goroutine执行完毕前，主goroutine会因为读取ch1中的数据而阻塞。从而保证了子goroutine会先执行完毕。这就消除了对时间的需求。在之前的程序中，我们要么让主goroutine进入睡眠，以防止主要的Goroutine退出。要么通过WaitGroup来保证子goroutine先执行完毕，主goroutine才结束。
+在上面的程序中，我们先创建了一个 chan bool 通道。然后启动了一条子 Goroutine，并循环打印 10 个数字。然后我们向通道 ch1 中写入输入 true。然后在主 goroutine 中，我们从 ch1 中读取数据。这一行代码是阻塞的，这意味着在子 Goroutine 将数据写入到该通道之前，主 goroutine 将不会执行到下一行代码。因此，我们可以通过 channel 实现子 goroutine 和主 goroutine 之间的通信。当子 goroutine 执行完毕前，主 goroutine 会因为读取 ch1 中的数据而阻塞。从而保证了子 goroutine 会先执行完毕。这就消除了对时间的需求。在之前的程序中，我们要么让主 goroutine 进入睡眠，以防止主要的 Goroutine 退出。要么通过 WaitGroup 来保证子 goroutine 先执行完毕，主 goroutine 才结束。
 
-示例代码：以下代码加入了睡眠，可以更好的理解channel的阻塞
+示例代码：以下代码加入了睡眠，可以更好的理解 channel 的阻塞
 
 ```go
 package main
@@ -228,18 +211,16 @@ func main() {
 
 ![WX20190812-154236](img/WX20190812-154236.png)
 
-
-
 再一个例子，这个程序将打印一个数字的个位数的平方和。
 
 ```go
 package main
 
-import (  
+import (
     "fmt"
 )
 
-func calcSquares(number int, squareop chan int) {  
+func calcSquares(number int, squareop chan int) {
     sum := 0
     for number != 0 {
         digit := number % 10
@@ -249,16 +230,16 @@ func calcSquares(number int, squareop chan int) {
     squareop <- sum
 }
 
-func calcCubes(number int, cubeop chan int) {  
-    sum := 0 
+func calcCubes(number int, cubeop chan int) {
+    sum := 0
     for number != 0 {
         digit := number % 10
         sum += digit * digit * digit
         number /= 10
     }
     cubeop <- sum
-} 
-func main() {  
+}
+func main() {
     number := 589
     sqrch := make(chan int)
     cubech := make(chan int)
@@ -275,20 +256,18 @@ func main() {
 Final output 1536
 ```
 
-
-
 ### 2.3 死锁
 
-使用通道时要考虑的一个重要因素是死锁。如果Goroutine在一个通道上发送数据，那么预计其他的Goroutine应该接收数据。如果这种情况不发生，那么程序将在运行时出现死锁。
+使用通道时要考虑的一个重要因素是死锁。如果 Goroutine 在一个通道上发送数据，那么预计其他的 Goroutine 应该接收数据。如果这种情况不发生，那么程序将在运行时出现死锁。
 
-类似地，如果Goroutine正在等待从通道接收数据，那么另一些Goroutine将会在该通道上写入数据，否则程序将会死锁。
+类似地，如果 Goroutine 正在等待从通道接收数据，那么另一些 Goroutine 将会在该通道上写入数据，否则程序将会死锁。
 
 示例代码：
 
 ```go
 package main
 
-func main() {  
+func main() {
     ch := make(chan int)
     ch <- 5
 }
@@ -304,18 +283,12 @@ main.main()
 	/Users/ruby/go/src/l_goroutine/demo08_chan.go:5 +0x50
 ```
 
-
-
-> 在主流的编程语言中为了保证多线程之间共享数据安全性和一致性，都会提供一套基本的同步工具集，如锁，条件变量，原子操作等等。Go语言标准库也毫不意外的提供了这些同步机制，使用方式也和其他语言也差不多。
-> 除了这些基本的同步手段，Go语言还提供了一种新的同步机制: Channel，它在Go语言中是一个像int, float32等的基本类型，一个channel可以认为是一个能够在多个Goroutine之间传递某一类型的数据的管道。Go中的channel无论是实现机制还是使用场景都和Java中的BlockingQueue很接近。
-
-
-
-
+> 在主流的编程语言中为了保证多线程之间共享数据安全性和一致性，都会提供一套基本的同步工具集，如锁，条件变量，原子操作等等。Go 语言标准库也毫不意外的提供了这些同步机制，使用方式也和其他语言也差不多。
+> 除了这些基本的同步手段，Go 语言还提供了一种新的同步机制: Channel，它在 Go 语言中是一个像 int, float32 等的基本类型，一个 channel 可以认为是一个能够在多个 Goroutine 之间传递某一类型的数据的管道。Go 中的 channel 无论是实现机制还是使用场景都和 Java 中的 BlockingQueue 很接近。
 
 ## 三、 关闭通道
 
-发送者可以通过关闭信道，来通知接收方不会有更多的数据被发送到channel上。
+发送者可以通过关闭通道，来通知接收方不会有更多的数据被发送到 channel 上。
 
 ```go
 close(ch)
@@ -326,22 +299,18 @@ close(ch)
 语法结构：
 
 ```go
-v, ok := <- ch  
+v, ok := <- ch
 ```
 
-> 类似map操作，存储key，value键值对
+> 类似 map 操作，存储 key，value 键值对
 >
-> v,ok := map[key] //根据key从map中获取value，如果key存在， v就是对应的数据，如果key不存在，v是默认值
+> v,ok := map[key] //根据 key 从 map 中获取 value，如果 key 存在， v 就是对应的数据，如果 key 不存在，v 是默认值
 
+在上面的语句中，如果 ok 的值是 true，表示成功的从通道中读取了一个数据 value。如果 ok 是 false，这意味着我们正在从一个封闭的通道读取数据。从闭通道读取的值将是通道类型的零值。
 
-
-在上面的语句中，如果ok的值是true，表示成功的从通道中读取了一个数据value。如果ok是false，这意味着我们正在从一个封闭的通道读取数据。从闭通道读取的值将是通道类型的零值。
-
-例如，如果通道是一个int通道，那么从封闭通道接收的值将为0。
+例如，如果通道是一个 int 通道，那么从封闭通道接收的值将为 0。
 
 示例代码：
-
-
 
 ```go
 package main
@@ -389,17 +358,20 @@ func sendData(ch1 chan int)  {
 
 ![WX20190813-100521](img/WX20190813-100521.png)
 
+在上面的程序中，send Goroutine 将 0 到 9 写入 chl 通道，然后关闭通道。主函数里有一个无限循环。它检查通道是否在发送数据后，使用变量 ok 关闭。如果 ok 是假的，则意味着通道关闭，因此循环结束。还可以打印接收到的值和 ok 的值。
 
+**注意：**
 
-在上面的程序中，send Goroutine将0到9写入chl通道，然后关闭通道。主函数里有一个无限循环。它检查通道是否在发送数据后，使用变量ok关闭。如果ok是假的，则意味着通道关闭，因此循环结束。还可以打印接收到的值和ok的值。
+1. 向已关闭的通道发送数据会导致 panic，最佳实践是由发送者关闭通道，能最大程度地避免该 panic
+2. 重复关闭某个通道会导致 panic
 
-
+最佳实践：由发送者关闭通东
 
 ## 四、通道上的范围循环
 
-我们可以循环从通道上获取数据，直到通道关闭。for循环的for range形式可用于从通道接收值，直到它关闭为止。
+我们可以循环从通道上获取数据，直到通道关闭。for 循环的 for range 形式可用于从通道接收值，直到它关闭为止。
 
-使用range循环，示例代码：
+使用 range 循环，示例代码：
 
 ```go
 package main
@@ -431,35 +403,29 @@ func sendData(ch1 chan int)  {
 
 ![WX20190813-100915](img/WX20190813-100915.png)
 
-
-
-
-
 ## 五、非缓冲通道
 
 之前学习的所有通道基本上都没有缓冲。发送和接收到一个未缓冲的通道是阻塞的。
 
-一次发送操作对应一次接收操作，对于一个goroutine来讲，它的一次发送，在另一个goroutine接收之前都是阻塞的。同样的，对于接收来讲，在另一个goroutine发送之前，它也是阻塞的。
-
-
+一次发送操作对应一次接收操作，对于一个 goroutine 来讲，它的一次发送，在另一个 goroutine 接收之前都是阻塞的。同样的，对于接收来讲，在另一个 goroutine 发送之前，它也是阻塞的。
 
 ## 六、缓冲通道
 
 缓冲通道就是指一个通道，带有一个缓冲区。发送到一个缓冲通道只有在缓冲区满时才被阻塞。类似地，从缓冲通道接收的信息只有在缓冲区为空时才会被阻塞。
 
-可以通过将额外的容量参数传递给make函数来创建缓冲通道，该函数指定缓冲区的大小。
+可以通过将额外的容量参数传递给 make 函数来创建缓冲通道，该函数指定缓冲区的大小。
 
 语法：
 
 ```go
-ch := make(chan type, capacity)  
+ch := make(chan type, capacity)
 ```
 
-上述语法的容量应该大于0，以便通道具有缓冲区。默认情况下，无缓冲通道的容量为0，因此在之前创建通道时省略了容量参数。
+上述语法的容量应该大于 0，以便通道具有缓冲区。默认情况下，无缓冲通道的容量为 0，因此在之前创建通道时省略了容量参数。
 
 示例代码：
 
-以下的代码中，chan通道，是带有缓冲区的。
+以下的代码中，chan 通道，是带有缓冲区的。
 
 ```go
 package main
@@ -521,34 +487,24 @@ func sendData3(ch3 chan string) {
 
 ```
 
-
-
 运行结果：
 
 ![WX20190813-102230](img/WX20190813-102230.png)
 
-
-
-
-
 ## 七、双向通道
 
-通道，channel，是用于实现goroutine之间的通信的。一个goroutine可以向通道中发送数据，另一条goroutine可以从该通道中获取数据。截止到现在我们所学习的通道，都是既可以发送数据，也可以读取数据，我们又把这种通道叫做双向通道。
+通道，channel，是用于实现 goroutine 之间的通信的。一个 goroutine 可以向通道中发送数据，另一条 goroutine 可以从该通道中获取数据。截止到现在我们所学习的通道，都是既可以发送数据，也可以读取数据，我们又把这种通道叫做双向通道。
 
 ```go
-data := <- a // read from channel a  
+data := <- a // read from channel a
 a <- data // write to channel a
 ```
-
-
 
 ## 八、单向通道
 
 单向通道，也就是定向通道。
 
 之前我们学习的通道都是双向通道，我们可以通过这些通道接收或者发送数据。我们也可以创建单向通道，这些通道只能发送或者接收数据。
-
-
 
 双向通道，实例代码：
 
@@ -594,10 +550,6 @@ func sendData(ch1 chan string, done chan bool)  {
 运行结果：
 
 ![WX20190814-101353](img/WX20190814-101353.png)
-
-
-
-
 
 创建仅能发送数据的通道，示例代码：
 
@@ -661,19 +613,13 @@ func fun2(ch <-chan int){
 
 ![WX20190814-102655](img/WX20190814-102655.png)
 
+## 九、time 包中的通道相关函数
 
+主要就是定时器，标准库中的 Timer 让用户可以定义自己的超时逻辑，尤其是在应对 select 处理多个 channel 的超时、单 channel 读写的超时等情形时尤为方便。
 
+Timer 是一次性的时间触发事件，这点与 Ticker 不同，Ticker 是按一定时间间隔持续触发时间事件。
 
-
-
-
-## 九、time包中的通道相关函数
-
-主要就是定时器，标准库中的Timer让用户可以定义自己的超时逻辑，尤其是在应对select处理多个channel的超时、单channel读写的超时等情形时尤为方便。
-
-Timer是一次性的时间触发事件，这点与Ticker不同，Ticker是按一定时间间隔持续触发时间事件。
-
-Timer常见的创建方式：
+Timer 常见的创建方式：
 
 ```go
 t:= time.NewTimer(d)
@@ -683,7 +629,7 @@ c:= time.After(d)
 
 虽然说创建方式不同，但是原理是相同的。
 
-Timer有3个要素：
+Timer 有 3 个要素：
 
 ```go
 定时时间：就是那个d
@@ -691,18 +637,13 @@ Timer有3个要素：
 时间channel： 也就是t.C
 ```
 
-
 ### 9.1、time.NewTimer()
 
-NewTimer()创建一个新的计时器，该计时器将在其通道上至少持续d之后发送当前时间。
-
-
+NewTimer()创建一个新的计时器，该计时器将在其通道上至少持续 d 之后发送当前时间。
 
 ![WX20190815-100148](img/WX20190815-100148.png)
 
-它的返回值是一个Timer。
-
-
+它的返回值是一个 Timer。
 
 源代码：
 
@@ -724,14 +665,12 @@ func NewTimer(d Duration) *Timer {
 }
 ```
 
-通过源代码我们可以看出，首先创建一个channel，关联的类型为Time，然后创建了一个Timer并返回。
+通过源代码我们可以看出，首先创建一个 channel，关联的类型为 Time，然后创建了一个 Timer 并返回。
 
-- 用于在指定的Duration类型时间后调用函数或计算表达式。
-- 如果只是想指定时间之后执行,使用time.Sleep()
-- 使用NewTimer(),可以返回的Timer类型在计时器到期之前,取消该计时器
-- 直到使用<-timer.C发送一个值,该计时器才会过期
-
-
+- 用于在指定的 Duration 类型时间后调用函数或计算表达式。
+- 如果只是想指定时间之后执行,使用 time.Sleep()
+- 使用 NewTimer(),可以返回的 Timer 类型在计时器到期之前,取消该计时器
+- 直到使用<-timer.C 发送一个值,该计时器才会过期
 
 示例代码：
 
@@ -766,17 +705,11 @@ func main() {
 
 ![WX20190815-104148](img/WX20190815-104148.png)
 
-
-
 ### 9.2、timer.Stop
 
 计时器停止：
 
-
-
 ![WX20190815-102436](img/WX20190815-102436.png)
-
-
 
 示例代码：
 
@@ -842,15 +775,11 @@ func main() {
 
 ![WX20190815-104319](img/WX20190815-104319.png)
 
-
-
 ### 9.3、time.After()
 
-在等待持续时间之后，然后在返回的通道上发送当前时间。它相当于NewTimer(d).C。在计时器触发之前，垃圾收集器不会恢复底层计时器。如果效率有问题，使用NewTimer代替，并调用Timer。如果不再需要计时器，请停止。
+在等待持续时间之后，然后在返回的通道上发送当前时间。它相当于 NewTimer(d).C。在计时器触发之前，垃圾收集器不会恢复底层计时器。如果效率有问题，使用 NewTimer 代替，并调用 Timer。如果不再需要计时器，请停止。
 
 ![WX20190815-093909](img/WX20190815-093909.png)
-
-
 
 源码：
 
@@ -897,24 +826,18 @@ func main() {
 
 ![WX20190815-095743](img/WX20190815-095743.png)
 
+## 十、select 语句
 
+select 是 Go 中的一个控制结构。select 语句类似于 switch 语句，但是 select 会随机执行一个可运行的 case。如果没有 case 可运行，它将阻塞，直到有 case 可运行。
 
-
-
-
-
-## 十、select语句
-
-select 是 Go 中的一个控制结构。select 语句类似于 switch 语句，但是select会随机执行一个可运行的case。如果没有case可运行，它将阻塞，直到有case可运行。
-
-select语句的语法结构和switch语句很相似，也有case语句和default语句：
+select 语句的语法结构和 switch 语句很相似，也有 case 语句和 default 语句：
 
 ```go
 select {
     case communication clause  :
-       statement(s);      
+       statement(s);
     case communication clause  :
-       statement(s); 
+       statement(s);
     /* 你可以定义任意数量的 case */
     default : /* 可选 */
        statement(s);
@@ -923,21 +846,19 @@ select {
 
 说明：
 
-- 每个case都必须是一个通信
+- 每个 case 都必须是一个通信
 
-- 所有channel表达式都会被求值
+- 所有 channel 表达式都会被求值
 
 - 所有被发送的表达式都会被求值
 
-- 如果有多个case都可以运行，select会随机公平地选出一个执行。其他不会执行。 
+- 如果有多个 case 都可以运行，select 会随机公平地选出一个执行。其他不会执行。
 
 - 否则：
 
-  如果有default子句，则执行该语句。
+  如果有 default 子句，则执行该语句。
 
-  如果没有default字句，select将阻塞，直到某个通信可以运行；Go不会重新对channel或值进行求值。
-
-
+  如果没有 default 字句，select 将阻塞，直到某个通信可以运行；Go 不会重新对 channel 或值进行求值。
 
 示例代码：
 
@@ -951,8 +872,8 @@ import (
 
 func main() {
 	/*
-	分支语句：if，switch，select
-	select 语句类似于 switch 语句，
+	分支语句：if，switch，select_demo
+	select_demo 语句类似于 switch 语句，
 		但是select会随机执行一个可运行的case。
 		如果没有case可运行，它将阻塞，直到有case可运行。
 	 */
@@ -985,15 +906,11 @@ func main() {
 
 ```
 
-运行结果：可能执行第一个case，打印100，也可能执行第二个case，打印200。(多运行几次，结果就不同了)
-
-
+运行结果：可能执行第一个 case，打印 100，也可能执行第二个 case，打印 200。(多运行几次，结果就不同了)
 
 ![WX20190816-104608](img/WX20190816-104608.png)
 
-
-
-select语句结合time包的和chan相关函数，示例代码：
+select 语句结合 time 包的和 chan 相关函数，示例代码：
 
 ```go
 package main
@@ -1026,55 +943,32 @@ func main() {
 
 ```
 
-
-
 运行结果：
 
 ![WX20190816-104450](img/WX20190816-104450.png)
 
+## 十一、Go 语言的 CSP 模型
 
+go 语言的最大两个亮点，一个是 goroutine，一个就是 chan 了。二者合体的典型应用 CSP，基本就是大家认可的并行开发神器，简化了并行程序的开发难度，我们来看一下 CSP。
 
+### 11.1、CSP 是什么
 
-
-
-
-
-
-## 十一、Go语言的CSP模型
-
-
-
-go语言的最大两个亮点，一个是goroutine，一个就是chan了。二者合体的典型应用CSP，基本就是大家认可的并行开发神器，简化了并行程序的开发难度，我们来看一下CSP。 
-
-
-
-### 11.1、CSP是什么
-
-CSP 是 Communicating Sequential Process 的简称，中文可以叫做通信顺序进程，是一种并发编程模型，是一个很强大的并发数据模型，是上个世纪七十年代提出的，用于描述两个独立的并发实体通过共享的通讯 channel(管道)进行通信的并发模型。相对于Actor模型，CSP中channel是第一类对象，它不关注发送消息的实体，而关注与发送消息时使用的channel。
+CSP 是 Communicating Sequential Process 的简称，中文可以叫做通信顺序进程，是一种并发编程模型，是一个很强大的并发数据模型，是上个世纪七十年代提出的，用于描述两个独立的并发实体通过共享的通讯 channel(管道)进行通信的并发模型。相对于 Actor 模型，CSP 中 channel 是第一类对象，它不关注发送消息的实体，而关注与发送消息时使用的 channel。
 
 严格来说，CSP 是一门形式语言（类似于 ℷ calculus），用于描述并发系统中的互动模式，也因此成为一众面向并发的编程语言的理论源头，并衍生出了 Occam/Limbo/Golang…
 
 而具体到编程语言，如 Golang，其实只用到了 CSP 的很小一部分，即理论中的 Process/Channel（对应到语言中的 goroutine/channel）：这两个并发原语之间没有从属关系， Process 可以订阅任意个 Channel，Channel 也并不关心是哪个 Process 在利用它进行通信；Process 围绕 Channel 进行读写，形成一套有序阻塞和可预测的并发模型。
 
-
-
 ### 11.2、Golang CSP
 
 与主流语言通过共享内存来进行并发控制方式不同，Go 语言采用了 CSP 模式。这是一种用于描述两个独立的并发实体通过共享的通讯 Channel（管道）进行通信的并发模型。
 
-Golang 就是借用CSP模型的一些概念为之实现并发进行理论支持，其实从实际上出发，go语言并没有，完全实现了CSP模型的所有理论，仅仅是借用了 process和channel这两个概念。process是在go语言上的表现就是 goroutine 是实际并发执行的实体，每个实体之间是通过channel通讯来实现数据共享。
+Golang 就是借用 CSP 模型的一些概念为之实现并发进行理论支持，其实从实际上出发，go 语言并没有，完全实现了 CSP 模型的所有理论，仅仅是借用了 process 和 channel 这两个概念。process 是在 go 语言上的表现就是 goroutine 是实际并发执行的实体，每个实体之间是通过 channel 通讯来实现数据共享。
 
+Go 语言的 CSP 模型是由协程 Goroutine 与通道 Channel 实现：
 
-
-Go语言的CSP模型是由协程Goroutine与通道Channel实现：
-
-- 
-  Go协程goroutine: 是一种轻量线程，它不是操作系统的线程，而是将一个操作系统线程分段使用，通过调度器实现协作式调度。是一种绿色线程，微线程，它与Coroutine协程也有区别，能够在发现堵塞后启动新的微线程。
-- 通道channel: 类似Unix的Pipe，用于协程之间通讯和同步。协程之间虽然解耦，但是它们和Channel有着耦合。
-
- 
-
-
+- Go 协程 goroutine: 是一种轻量线程，它不是操作系统的线程，而是将一个操作系统线程分段使用，通过调度器实现协作式调度。是一种绿色线程，微线程，它与 Coroutine 协程也有区别，能够在发现堵塞后启动新的微线程。
+- 通道 channel: 类似 Unix 的 Pipe，用于协程之间通讯和同步。协程之间虽然解耦，但是它们和 Channel 有着耦合。
 
 ### 11.3、Channel
 
@@ -1089,8 +983,6 @@ Channel 在 gouroutine 间架起了一条管道，在管道里传输数据，实
 不要通过共享内存来通信，而要通过通信来实现内存共享。
 
 这就是 Go 的并发哲学，它依赖 CSP 模型，基于 channel 实现。
-
-
 
 **channel 实现 CSP**
 
@@ -1112,11 +1004,7 @@ chan<- T // 声明一个只能用于发送的通道
 
 两者有一些差别：非缓冲型 channel 无法缓冲元素，对它的操作一定顺序是 “发送 -> 接收 -> 发送 -> 接收 -> ……”，如果想连续向一个非缓冲 chan 发送 2 个元素，并且没有接收的话，第一次一定会被阻塞；对于缓冲型 channel 的操作，则要 “宽松” 一些，毕竟是带了 “缓冲” 光环。
 
-
-
 ![channel](img/channel.png)
-
-
 
 对 chan 的发送和接收操作都会在编译期间转换成为底层的发送接收函数。
 
@@ -1128,40 +1016,28 @@ Channel 分为两种：带缓冲、不带缓冲。对不带缓冲的 channel 进
 
 小结一下：同步模式下，必须要使发送方和接收方配对，操作才会成功，否则会被阻塞；异步模式下，缓冲槽要有剩余容量，操作才会成功，否则也会被阻塞。
 
-
-
 简单来说，CSP 模型由并发执行的实体（线程或者进程或者协程）所组成，实体之间通过发送消息进行通信，
 这里发送消息时使用的就是通道，或者叫 channel。
 
 CSP 模型的关键是关注 channel，而不关注发送消息的实体。Go 语言实现了 CSP 部分理论，goroutine 对应 CSP 中并发执行的实体，channel 也就对应着 CSP 中的 channel。
 
-
-
 ### 11.4、Goroutine
 
-Goroutine 是实际并发执行的实体，它底层是使用协程(coroutine)实现并发，coroutine是一种运行在用户态的用户线程，类似于 greenthread，go底层选择使用coroutine的出发点是因为，它具有以下特点：
+Goroutine 是实际并发执行的实体，它底层是使用协程(coroutine)实现并发，coroutine 是一种运行在用户态的用户线程，类似于 greenthread，go 底层选择使用 coroutine 的出发点是因为，它具有以下特点：
 
 - 用户空间 避免了内核态和用户态的切换导致的成本
 - 可以由语言和框架层进行调度
 - 更小的栈空间允许创建大量的实例
 
-
-
-可以看到第二条 用户空间线程的调度不是由操作系统来完成的，像在java 1.3中使用的greenthread的是由JVM统一调度的(后java已经改为内核线程)，还有在ruby中的fiber(半协程) 是需要在重新中自己进行调度的，而goroutine是在golang层面提供了调度器，并且对网络IO库进行了封装，屏蔽了复杂的细节，对外提供统一的语法关键字支持，简化了并发程序编写的成本。
-
-
+可以看到第二条 用户空间线程的调度不是由操作系统来完成的，像在 java 1.3 中使用的 greenthread 的是由 JVM 统一调度的(后 java 已经改为内核线程)，还有在 ruby 中的 fiber(半协程) 是需要在重新中自己进行调度的，而 goroutine 是在 golang 层面提供了调度器，并且对网络 IO 库进行了封装，屏蔽了复杂的细节，对外提供统一的语法关键字支持，简化了并发程序编写的成本。
 
 ### 11.5、Goroutine 调度器
 
-Go并发调度: G-P-M模型
+Go 并发调度: G-P-M 模型
 
-在操作系统提供的内核线程之上，Go搭建了一个特有的两级线程模型。goroutine机制实现了M : N的线程模型，goroutine机制是协程（coroutine）的一种实现，golang内置的调度器，可以让多核CPU中每个CPU执行一个协程。
-
-
+在操作系统提供的内核线程之上，Go 搭建了一个特有的两级线程模型。goroutine 机制实现了 M : N 的线程模型，goroutine 机制是协程（coroutine）的一种实现，golang 内置的调度器，可以让多核 CPU 中每个 CPU 执行一个协程。
 
 ![goroutine2](img/goroutine2.png)
-
-
 
 ### 11.6、最后
 
@@ -1173,54 +1049,4 @@ Go 通过 channel 实现 CSP 通信模型，主要用于 goroutine 之间的消�
 
 要知道，技术并不是最重要的，它只是实现业务的工具。一门高效的开发语言让你把节省下来的时间，留着去做更有意义的事情，比如写写文章。
 
-
-
-
-
-
-
-> CSP 最早是由 Tony Hoare在 1977 年提出，据说老爷子至今仍在更新这个理论模型，有兴趣的朋友可以自行查阅电子版本：http://www.usingcsp.com/cspbook.pdf。
->
-> 
-
-
-
-
-
-
-
-参考文档：https://learnku.com/articles/32142
-
-
-
-
-
-千锋Go语言的学习群：784190273
-
-github知识库：
-
-https://github.com/rubyhan1314
-
-Golang网址：
-
-https://www.qfgolang.com/
-
-作者B站：
-
-https://space.bilibili.com/353694001
-
-对应视频地址：
-
-https://www.bilibili.com/video/av56018934
-
-https://www.bilibili.com/video/av47467197
-
-源代码：
-
-https://github.com/rubyhan1314/go_goroutine
-
-
-
-
-
-
+> CSP 最早是由 Tony Hoare 在 1977 年提出，据说老爷子至今仍在更新这个理论模型，有兴趣的朋友可以自行查阅电子版本：http://www.usingcsp.com/cspbook.pdf。
