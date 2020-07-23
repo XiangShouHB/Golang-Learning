@@ -15,27 +15,36 @@ func main() {
 			通道的零值为nil。nil通道没有任何用处，因此通道必须使用类似于map和切片的方法来定义。
 		通道的声明：
 			声明一个通道和定义一个变量的语法一样：
-			//声明通道
-			var 通道名 chan 数据类型
-			//创建通道：如果通道为nil(就是不存在)，就需要先创建通道
-			通道名 = make(chan 数据类型)
+			1.声明通道
+				var 通道名 chan 数据类型
+
+			2.创建通道：如果通道为nil(就是不存在)，就需要先创建通道
+				通道名 = make(chan 数据类型)
 		通道的数据类型：
 			channel是引用类型的数据，在作为参数传递的时候，传递的是内存地址。
 	*/
-	var ch_int chan int // 定义一个空通道
-	if ch_int == nil {
+	var chInt chan int // 定义一个空通道
+	if chInt == nil {
 		fmt.Println("channel 是 nil 的, 不能使用，需要先创建通道。。")
-		ch_int = make(chan int)
-		fmt.Printf("ch_int 的数据类型为：%T，值为：%v\n", ch_int, ch_int)
+		chInt = make(chan int)
+		fmt.Printf("chInt 的数据类型为：%T，值为：%v\n", chInt, chInt)
 	}
 	// 简短声明，并初始化
-	ch_str := make(chan string)
-	fmt.Println(ch_str)
+	chStr := make(chan string)
+	fmt.Println(chStr)
 
 	// 给通道发送数据
-	getChan(ch_str) // 数值打印的是内存地址，说明通道是引用类型
+	getChan(chStr) // 数值打印的是内存地址，说明通道是引用类型
+
 }
 
 func getChan(ch chan string) {
-	fmt.Printf("ch 参数为的数据类型为：%T，数值为：%v", ch, ch)
+	fmt.Printf("ch 参数为的数据类型为：%T，数值为：%v\n", ch, ch)
+}
+
+func chanDemo() {
+	var chanals [10]chan int
+	for i := 0; i < 10; i++ {
+		chanals[i] <- 'a' + i // 'a' 对应的ASCII值为97
+	}
 }
